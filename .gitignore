@@ -1,0 +1,3 @@
+# Ignore the generated CSV files with embeddings
+data/test_sampled_with_embeddings.csv
+data/train_sampled_with_embeddings.csv
