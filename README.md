@@ -9,3 +9,8 @@ Please copy .env.example to .env and fill in the required fields.
 ```bash
 cp .env.example .env
 ```
+
+To intsall llm-guard, run the following command:
+```bash
+make install-llm-guard
+```
