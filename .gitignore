@@ -1,6 +1,6 @@
-# Ignore the generated CSV files with embeddings
-data/test_sampled_with_embeddings.csv
-data/train_sampled_with_embeddings.csv
+# Ignore all CSV and Parquet files in the data directory
+data/*.csv
+data/*.parquet
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
