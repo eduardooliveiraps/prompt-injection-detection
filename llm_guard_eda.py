@@ -4,7 +4,6 @@ from pathlib import Path
 import os
 import random
 
-
 from openai.resources.chat import Completions
 from openai.resources.chat.completions import ChatCompletion
 from openai import OpenAI
@@ -88,6 +87,3 @@ messages = [
 for _ in range(5):
     response = llm_guard.create(model="gpt-4o-mini", messages=messages, max_tokens=10)
     print(response.choices[0].message.content)
-
-
-# %%
