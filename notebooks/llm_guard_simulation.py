@@ -1,16 +1,27 @@
 # %%
-
-from pathlib import Path
 import os
 import random
+import joblib
+import logging
+
+from pathlib import Path
+
 
 from openai.resources.chat import Completions
 from openai.resources.chat.completions import ChatCompletion
 from openai import OpenAI
 from openai.types.chat.chat_completion import Choice
 from openai.types.chat.chat_completion_message import ChatCompletionMessage
+from sentence_transformers import SentenceTransformer
+
+
+# Set up logging
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 from dotenv import load_dotenv
+
 from llm_guard import LLMGaurd
 
 # %%
@@ -72,8 +83,7 @@ llm_guard = LLMGaurd(
 )
 
 # %%
-
-# simulate a conversation with the LLMGuard
+# Simulate a conversation with the LLMGuard and Random model
 
 messages = [
     {
@@ -87,3 +97,32 @@ messages = [
 for _ in range(5):
     response = llm_guard.create(model="gpt-4o-mini", messages=messages, max_tokens=10)
     print(response.choices[0].message.content)
+
+# %%
+# Simulate a conversation with the LLMGuard and a LGB model
+
+
+def get_txt_embedding_for_lgb_model(text: str):
+    embedding_model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+    text = text.replace("\n", " ")
+    try:
+        return embedding_model.encode(text, show_progress_bar=False).tolist()
+    except Exception as e:
+        logging.error("Error encoding text: %s", e)
+        return None
+
+
+def get_lgb_model(model_name: str):
+    model_path = f"../models/{model_name}"
+    if not Path(model_path).exists():
+        raise FileNotFoundError("Model not found")
+    return joblib.load(model_path)
+
+
+def lgb_model_input_guard():
+    pass
+
+
+# %%
+# Simulate a conversation with the LLMGuard and distilbert/distilroberta-base from the colab notebook
+# %%
