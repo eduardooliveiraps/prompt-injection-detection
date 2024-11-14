@@ -47,8 +47,10 @@ def get_colab_model_and_tokenizer():
     return model, tokenizer
 
 
+model, tokenizer = get_colab_model_and_tokenizer()
+
+
 def colab_model_input_guard(messages):
-    model, tokenizer = get_colab_model_and_tokenizer()
     is_valid = True
     for message in messages:
         text = message["content"][0]["text"]
