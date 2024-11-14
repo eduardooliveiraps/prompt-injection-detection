@@ -13,7 +13,8 @@ from openai import OpenAI
 from openai.types.chat.chat_completion import Choice
 from openai.types.chat.chat_completion_message import ChatCompletionMessage
 from sentence_transformers import SentenceTransformer
-
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import torch
 
 # Set up logging
 logging.basicConfig(
@@ -28,8 +29,8 @@ from llm_guard import LLMGaurd
 # define constants
 
 # load environment variables
-filepath = Path(__file__)
-env_filepath = filepath.parent / ".env"
+env_filepath = "../.env"
+
 load_dotenv(dotenv_path=env_filepath)
 
 if not os.environ.get("OPENAI_APIKEY"):
@@ -190,6 +191,49 @@ for message in lgbm_messages:
     print(response.choices[0].message.content)
 
 # %%
-# TODO
 # Simulate a conversation with the LLMGuard and distilbert/distilroberta-base from the colab notebook
+
+
+def get_colab_model_and_tokenizer():
+    colab_model_path = "../models/colab_models/20_epochs_distilroberta-base"
+    tokenizer_path = "distilbert/distilroberta-base"
+
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
+    model = AutoModelForSequenceClassification.from_pretrained(colab_model_path)
+    return model, tokenizer
+
+
+def colab_model_input_guard(messages):
+    model, tokenizer = get_colab_model_and_tokenizer()
+
+    is_valid = True
+    for message in messages:
+        text = message["content"][0]["text"]
+        inputs = tokenizer(text, return_tensors="pt")
+        model.eval()
+        with torch.no_grad():
+            outputs = model(**inputs)
+        logits = outputs.logits
+        predicted_class = torch.argmax(logits, dim=-1)
+        is_valid &= predicted_class[0] == 0
+    return is_valid
+
+
+# %%
+colab_messages = lgbm_messages.copy()
+
+llm_guard_with_colab = LLMGaurd(
+    completions=completions,
+    input_guard=colab_model_input_guard,
+    output_guard=lambda _: True,
+    invalid_input_response=create_invalid_response("Nice try .. but no"),
+    invalid_output_response=invalid_output_response,
+)
+
+for message in colab_messages:
+    response = llm_guard_with_colab.create(
+        model="gpt-4o-mini", messages=[message], max_tokens=10
+    )
+    print(response.choices[0].message.content)
+
 # %%
