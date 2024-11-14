@@ -131,7 +131,7 @@ st.session_state.setdefault(
     ],
 )
 
-st.title("LLM Guard App")
+st.title(":lock: LLM Guard App")
 
 chat_placeholder = st.empty()
 
