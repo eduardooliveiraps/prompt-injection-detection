@@ -145,9 +145,11 @@ st.session_state.setdefault(
 # ------------------------------
 st.title(":lock: LLM Guard App")
 
+st.divider()
+
 chat_placeholder = st.empty()
 
-with chat_placeholder.container():
+with chat_placeholder.container(height=500):
     merged_messages = [
         item
         for pair in zip_longest(
@@ -161,17 +163,13 @@ with chat_placeholder.container():
         is_user = i % 2 == 1
         message(msg, is_user=is_user, key=f"{i}")
 
+st.button("Clear Chat", on_click=on_clear_btn_clicked)
+st.divider()
+
 with st.container():
     st.text_input(
         "User input",
         key="user_input",
         placeholder="Type a message...",
     )
-
-    col1, _col2, _col3, col4 = st.columns(4)
-
-    with col1:
-        st.button("Send", on_click=on_send_message)
-
-    with col4:
-        st.button("Clear Chat", on_click=on_clear_btn_clicked)
+    st.button("Send", on_click=on_send_message)
