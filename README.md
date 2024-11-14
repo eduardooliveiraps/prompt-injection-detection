@@ -34,3 +34,16 @@ The notebooks are located in the `notebooks` directory. Each notebook has a spec
 ## LLM Guard
 
 LLM Guard is a lib located in the `llm_guard` directory. It is used to act as a wrapper for the LLM model and apply some preprocessing and postprocessing on the user input to ensure that the model is not being attacked by prompt injection attacks.
+
+
+## LLM Guard: Streamlit App
+
+Before running the streamlit app, make sure to install the required dependencies by running the following command:
+```bash
+pip install -r streamlit-app/requirements.txt
+```
+
+To run the streamlit app, run the following command:
+```bash
+make st-run
+```
