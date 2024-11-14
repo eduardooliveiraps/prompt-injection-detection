@@ -16,8 +16,10 @@ from llm_guard import LLMGaurd
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from streamlit_chat import message
 
-
+# ------------------------------
 # define openai and completions object
+# ------------------------------
+
 env_filepath = ".env"
 
 load_dotenv(dotenv_path=env_filepath)
@@ -34,7 +36,9 @@ openai = OpenAI(
 completions = Completions(client=openai)
 
 
+# ------------------------------
 # define llm guard object
+# ------------------------------
 
 
 @st.cache_data()
@@ -92,7 +96,9 @@ llm_guard_with_lgb = LLMGaurd(
 )
 
 
+# ------------------------------
 # define onclick functions
+# ------------------------------
 def on_send_message():
     user_input = st.session_state.user_input
 
@@ -133,6 +139,10 @@ st.session_state.setdefault(
     ],
 )
 
+
+# ------------------------------
+# Streamlit app layout starts here
+# ------------------------------
 st.title(":lock: LLM Guard App")
 
 chat_placeholder = st.empty()
