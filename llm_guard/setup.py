@@ -8,7 +8,9 @@ setup(
     description="A short description of your package",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    packages=find_packages(),  # Automatically finds all packages in the project directory
+    packages=find_packages(
+        include=["llm_guard"]
+    ),  # Automatically finds all packages in the project directory
     install_requires=[
         "openai==1.54.3",
         "python-dotenv==1.0.1",
