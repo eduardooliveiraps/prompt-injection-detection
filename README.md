@@ -19,3 +19,31 @@ To intsall llm-guard, run the following command:
 ```bash
 make install-llm-guard
 ```
+
+## Notebooks
+
+The notebooks are located in the `notebooks` directory. Each notebook has a specific purpose and is named accordingly.
+
+- `data-preprocessing.ipynb`: This notebook is used to preprocess the dataset, it outputs a sample of the dataset to be used later on.
+- `generate-embeddings.ipynb`: This notebook is used to generate embeddings for the dataset.
+- `simple_model_training.ipynb`: This notebook is used to train a simple model on the dataset and evaluate it.
+- `colab_model_training.ipynb`: This notebook is used to get a pre-trained model from huggingface and train  the dataset using Google Colab and evaluate it.
+- `llm_guard_simulation.py`: This notebook is used to simulate the LLM-Guard model on different models and see the results.
+  
+
+## LLM Guard
+
+LLM Guard is a lib located in the `llm_guard` directory. It is used to act as a wrapper for the LLM model and apply some preprocessing and postprocessing on the user input to ensure that the model is not being attacked by prompt injection attacks.
+
+
+## LLM Guard: Streamlit App
+
+Before running the streamlit app, make sure to install the required dependencies by running the following command:
+```bash
+pip install -r streamlit-app/requirements.txt
+```
+
+To run the streamlit app, run the following command:
+```bash
+make st-run
+```
