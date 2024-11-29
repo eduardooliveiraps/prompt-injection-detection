@@ -12,7 +12,6 @@ setup(
         include=["llm_guard"]
     ),  # Automatically finds all packages in the project directory
     install_requires=[
-        "openai==1.54.3",
         "python-dotenv==1.0.1",
         "litellm==1.53.1",
     ],
