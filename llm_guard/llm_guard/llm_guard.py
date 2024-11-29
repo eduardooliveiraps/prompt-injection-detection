@@ -2,8 +2,8 @@
 It will contain the main class that will be used to create the LLMGuard object.
 """
 
-from openai.resources.chat import Completions
-from openai.resources.chat.completions import ChatCompletion
+from litellm.main import Completions
+from litellm.types.utils import TextCompletionResponse
 
 from typing import Callable, Any
 
@@ -22,8 +22,8 @@ class LLMGaurd:
         completions: Completions,
         input_guard: Callable[[Any], bool] = None,
         output_guard: Callable[[Any], bool] = None,
-        invalid_input_response: ChatCompletion = None,
-        invalid_output_response: ChatCompletion = None,
+        invalid_input_response: TextCompletionResponse = None,
+        invalid_output_response: TextCompletionResponse = None,
     ):
         self.completions = completions
         self.input_guard = input_guard if input_guard else default_input_guard
