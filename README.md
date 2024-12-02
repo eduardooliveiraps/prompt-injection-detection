@@ -20,6 +20,12 @@ To intsall llm-guard, run the following command:
 make install-llm-guard
 ```
 
+To install dev requirements, run the following command:
+```bash
+make install-dev
+# or pip install -r requirements.txt
+```
+
 ## Notebooks
 
 The notebooks are located in the `notebooks` directory. Each notebook has a specific purpose and is named accordingly.
