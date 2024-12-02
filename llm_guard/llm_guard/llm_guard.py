@@ -16,7 +16,7 @@ def default_output_guard(_messages) -> bool:
     return True
 
 
-def create_invalid_response(text: str) -> ModelResponse:
+def create_response(text: str) -> ModelResponse:
     return ModelResponse(
         id="",
         object="chat.completion",
