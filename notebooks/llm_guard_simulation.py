@@ -1,29 +1,16 @@
 # %%
+import logging
 import os
 import random
-import joblib
-import logging
-
 from pathlib import Path
 
-
-from openai.resources.chat import Completions
-from openai.resources.chat.completions import ChatCompletion
-from openai import OpenAI
-from openai.types.chat.chat_completion import Choice
-from openai.types.chat.chat_completion_message import ChatCompletionMessage
-from sentence_transformers import SentenceTransformer
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import joblib
 import torch
-
-# Set up logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
-
 from dotenv import load_dotenv
+from sentence_transformers import SentenceTransformer
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
-from llm_guard import LLMGaurd
+from llm_guard import LLMGaurd, create_response
 
 # %%
 # define constants
@@ -33,50 +20,20 @@ env_filepath = "../.env"
 
 load_dotenv(dotenv_path=env_filepath)
 
-if not os.environ.get("OPENAI_APIKEY"):
-    raise ValueError("OPENAI_APIKEY not found in the environment variables")
-
-# get the api key and create the openai object
-api_key = os.environ.get("OPENAI_APIKEY")
-
-openai = OpenAI(
-    api_key=api_key,
-)
-completions = Completions(client=openai)
-
-
-# %%
-# define helper functions
-def create_invalid_response(text: str) -> ChatCompletion:
-    return ChatCompletion(
-        id="",
-        object="chat.completion",
-        created=0,
-        model="",
-        choices=[
-            Choice(
-                index=0,
-                finish_reason="length",
-                message=ChatCompletionMessage(
-                    content=text,
-                    role="assistant",
-                ),
-            )
-        ],
-    )
+if not os.environ.get("OPENAI_API_KEY"):
+    raise ValueError("OPENAI_API_KEY not found in the environment variables")
 
 
 # %%
 # define LLM responses
-invalid_input_response = create_invalid_response("Invalid input")
-invalid_output_response = create_invalid_response("Invalid output")
+invalid_input_response = create_response("Invalid input")
+invalid_output_response = create_response("Invalid output")
 
 
 # llm_guard = LLMGaurd(completions=completions)
 
 # llm_guard with random response
 llm_guard = LLMGaurd(
-    completions=completions,
     input_guard=lambda _: random.choice([True, False]),
     output_guard=lambda _: random.choice([True, False]),
     invalid_input_response=invalid_input_response,
@@ -86,7 +43,7 @@ llm_guard = LLMGaurd(
 # %%
 # Simulate a conversation with the LLMGuard and Random model
 
-messages = [
+test_message = [
     {
         "role": "user",
         "content": [
@@ -96,7 +53,9 @@ messages = [
 ]
 
 for _ in range(5):
-    response = llm_guard.create(model="gpt-4o-mini", messages=messages, max_tokens=10)
+    response = llm_guard.completions(
+        model="gpt-4o-mini", messages=test_message, max_tokens=10
+    )
     print(response.choices[0].message.content)
 
 
@@ -134,10 +93,9 @@ def lgb_model_input_guard(messages):
 
 # %%
 llm_guard_with_lgb = LLMGaurd(
-    completions=completions,
     input_guard=lgb_model_input_guard,
     output_guard=lambda _: True,
-    invalid_input_response=create_invalid_response("Nice try .. but no"),
+    invalid_input_response=create_response("Nice try .. but no"),
     invalid_output_response=invalid_output_response,
 )
 
@@ -185,7 +143,7 @@ lgbm_messages = [
 ]
 
 for message in lgbm_messages:
-    response = llm_guard_with_lgb.create(
+    response = llm_guard_with_lgb.completions(
         model="gpt-4o-mini", messages=[message], max_tokens=10
     )
     print(response.choices[0].message.content)
@@ -207,8 +165,8 @@ def colab_model_input_guard(messages):
     model, tokenizer = get_colab_model_and_tokenizer()
 
     is_valid = True
-    for message in messages:
-        text = message["content"][0]["text"]
+    for msg in messages:
+        text = msg["content"][0]["text"]
         inputs = tokenizer(text, return_tensors="pt")
         model.eval()
         with torch.no_grad():
@@ -223,16 +181,15 @@ def colab_model_input_guard(messages):
 colab_messages = lgbm_messages.copy()
 
 llm_guard_with_colab = LLMGaurd(
-    completions=completions,
     input_guard=colab_model_input_guard,
     output_guard=lambda _: True,
-    invalid_input_response=create_invalid_response("Nice try .. but no"),
+    invalid_input_response=create_response("Nice try .. but no"),
     invalid_output_response=invalid_output_response,
 )
 
-for message in colab_messages:
-    response = llm_guard_with_colab.create(
-        model="gpt-4o-mini", messages=[message], max_tokens=10
+for msg in colab_messages:
+    response = llm_guard_with_colab.completions(
+        model="gpt-4o-mini", messages=[msg], max_tokens=10
     )
     print(response.choices[0].message.content)
 
