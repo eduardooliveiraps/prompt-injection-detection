@@ -19,6 +19,10 @@ To intsall llm-guard, run the following command:
 ```bash
 make install-llm-guard
 ```
+or to install from github:
+```bash
+pip install "git+https://github.com/eduardooliveiraps/prompt-injection-detection.git#egg=llm_guard&subdirectory=llm_guard/"
+```
 
 To install dev requirements, run the following command:
 ```bash
